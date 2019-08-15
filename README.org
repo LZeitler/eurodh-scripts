@@ -1,0 +1,27 @@
+#+options: toc:2
+#+title: EuroDH Project Scripts
+#+author: Leo Zeitler, Jeffrey Ross-Ibarra, Markus Stetter
+
+* Description
+
+** Data
+
+** Scripts
+   ~probability_farm_260419.R~ calculates ancestral frequecies and joint probabilities for figure 2. It requires some time to compute, depending on the machine. To save some time, the output is also saved in the [[./output]] folder. 
+
+   The ~haplotypes_extract_*~ scripts in [[./scripts/hapex/]] are required to calculate haplotype statistics. This also takes some time to compute. For convenience, the output is already saved to [[./output/hapex]].
+
+** Reproduce Figures
+
+* Requirements
+- R (tested on 3.6.0)
+- vcftools
+- plink
+
+** GWAS
+- gctb (http://cnsgenomics.com/software/gctb/)
+
+** Generate VCF files and impute
+- beagle 5.0 (https://faculty.washington.edu/browning/beagle/, ~beagle.14May18.ff7.jar~)
+- TASSEL
+
