@@ -57,3 +57,22 @@ centro <- data.frame(chr=1:10,
                            mean(c(50.53, 52.07)),
                            mean(c(53.75, 55.39)),
                            mean(c(51.39, 52.78)))*1000000)
+
+get.prob <- function(file){
+    d <- fread(file,data.table=F)
+    d <- d %>%
+        mutate(logprob = -log10(prob)) %>%
+        group_by(race) %>%
+        mutate(cutoff=quantile(logprob, probs=.95)) %>% data.frame()
+    d$outl <- d$logprob>=d$cutoff
+    d
+}
+get.freq <- function(file){
+    d <- fread(file,data.table=F) %>%
+        filter(!top==-Inf)
+    d$in_CI <- d$d >= d$bot & d$d <= d$top
+    d$outl <- !d$in_CI
+    d$out.top <- d$d > d$top
+    d$out.bot <- d$d < d$bot
+    d
+}

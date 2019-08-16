@@ -73,8 +73,8 @@ f2a <- c
 #### plot fig 2b: jProb BU chrom 3
 
 ## prepare data 
-pop.base <- 'BU'                        # which population should be compared to
-basepop <- filter(prodf, race==pop.base)   # baseline population
+pop.base <- 'BU'                         # which population should be compared to
+basepop <- filter(prodf, race==pop.base) # baseline population
 prodf.top <- prodf %>% group_by(race) %>% filter(logprob>=cutoff) %>% data.frame()
 basepop.top <- left_join(filter(basepop,logprob>=cutoff),data.frame(table(prodf.top$snp)),by=c('snp'='Var1'))
 basepop.bot <- filter(basepop, logprob<cutoff)

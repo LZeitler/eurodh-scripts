@@ -5,13 +5,17 @@
 * Description
 
 ** Data
+   Data (vcf files for 50k and 600k dataset, GWAS datasets, original datasets) is currently gitignored.
 
 ** Scripts
    ~probability_farm_260419.R~ calculates ancestral frequecies and joint probabilities for figure 2. It requires some time to compute, depending on the machine. To save some time, the output is also saved in the [[./output]] folder. 
 
-   The ~haplotypes_extract_*~ scripts in [[./scripts/hapex/]] are required to calculate haplotype statistics. This also takes some time to compute. For convenience, the output is already saved to [[./output/hapex]].
+   The ~haplotypes_extract_*~ scripts in [[./scripts/hapex]] are required to calculate haplotype statistics. This also takes some time to compute. For convenience, the output is already saved to [[./output/hapex]].
+
+   Genetic load based on GERP scores can be estimated using ~genespace_euler.R~. This script also runs for a while. Output is already stored ready for plotting in [[./output/genload]]. 
 
 ** Reproduce Figures
+   All figures can be reproduced using the provided scripts. Scripts for supplementary figures are have the prefix ~figS_*~. All plots are stored in [[./plots]]. 
 
 * Requirements
 - R (tested on 3.6.0)
