@@ -77,12 +77,21 @@ for (r in races){
         ## genotype in individuals
         outls <- filter(gerpo, chr==ch, race==ra, test1=='outlier')
         noutls <- filter(gerpo, chr==ch, race==ra, test1=='no outlier')
-        noutls <- lapply(levels(gerpo$cut.gerp.lr), function(x) # bootstrap samples, change to sapply 
-            ## lapply(1:100, function(i)  # uncomment for more, repeated samples, ----^^^^^^^^^^^^
-                sample_n(filter(noutls, cut.gerp.lr == x),
-                         size = nrow(filter(outls, cut.gerp.lr == x)), replace = T))
-            ## )
-        noutls <- do.call(rbind, noutls)             # convert list of lists to data.frame
+        dsamp <- lapply(levels(gerpo$cut.gerp.lr), function(x){
+            if (nrow(filter(noutls,cut.gerp.lr==x))>=nrow(filter(outls,cut.gerp.lr==x))){
+                tn <- sample_n(filter(noutls,cut.gerp.lr==x),
+                               size=nrow(filter(outls,cut.gerp.lr==x)),replace=F)
+                to <- filter(outls,cut.gerp.lr==x)
+            } else {
+                to <- sample_n(filter(outls,cut.gerp.lr==x),
+                               size=nrow(filter(noutls,cut.gerp.lr==x)),replace=F)
+                tn <- filter(noutls,cut.gerp.lr==x)
+            }
+            rbind(to,tn)
+        })
+        dsamp <- do.call(rbind, dsamp)
+        noutls <- filter(dsamp,outl==F)
+        outls <- filter(dsamp,outl==T)
         all <- filter(gerpo, chr==ch, race==ra | is.na(race)) %>% arrange(pos)
         lo <- outls$cm-.5               # cm limit of lower bound
         hi <- outls$cm+.5               # cm limit of upper bound
@@ -162,7 +171,7 @@ for (r in races){
 
             fwrite(                     # write recessive
                 rbind(dfs.s,dfs.n),
-                'genespace_260419v4_bootstrapped_recessive-6.txt',
+                'genespace_260419v4_recessive.txt',
                 sep = '\t', append = T)
 
             dfs.s <- data.frame2(
@@ -185,7 +194,7 @@ for (r in races){
 
             fwrite(                     # write additive
                 rbind(dfs.s,dfs.n),
-                'genespace_260419v4_bootstrapped_additive-6.txt',
+                'genespace_260419v4_additive.txt',
                 sep = '\t', append = T)
             
             ## status report
