@@ -1,9 +1,14 @@
 source('source_me.R')
 
+#### Fig 4 A (recessive load on haplotypes), Fig 4 B (Heterozygosity for aSFS),
+#### Supplementary Fig (additive load on haplotypes), Supplementary Fig (Heterozygosity for jProb)
+
 #### load data
 
 freq <- get.freq('output/freq_260419.txt')                    # aSFS
 prodf <- get.prob('output/pro_260419.txt')                    # jProb
+
+hapsums <- fread('output/genload/genespace_260419v4_600_hapsums.txt',data.table=F)
 
 #### prepare data
 
@@ -68,14 +73,33 @@ stratify <- function(data){
 
 ## prepare plots
 fig.het <- function(data){
+    whichtest <- if (names(data)[1]=='prob') 'jProb test' else 'aSFS test'
     c <- ggplot(data)
     c <- c+geom_violin(aes(race,hetfreq,fill=outl),alpha=.8)
     c <- c+stat_summary(aes(race,hetfreq,group=outl),alpha=.8,
                         position=position_dodge(.9),fun.y='mean',geom='point',shape=18,size=3)
     c <- c+scale_fill_viridis(discrete = T, begin = .2, end = .8, direction = -1,labels=c('non-outlier','outlier'))
-    c <- c+labs(x='Accession',y='Heterozygote frequency',fill='SNP')
+    c <- c+labs(x='Accession',y=paste0('Heterozygote frequency\n',whichtest),fill='SNP')
     c
 }
+
+fig.hap <- function(data,type='recessive'){
+    if (type=='recessive') {
+        var <- 'gerpr'
+        lstr <- labs(y='Load of haplotypes\nrecessive model', fill='Type',
+                     x='Accession')
+    }
+    if (type=='additive') {
+        var <- 'gerpa'
+        lstr <- labs(y='Load of haplotype\nadditive model', fill='Type',
+                     x='Accession')
+    }
+    ggplot(hapsums)+
+        geom_boxplot(aes_string('race',var,fill='factor(type,levels=c("LR","DH"))'),alpha=.8)+
+        scale_fill_viridis(discrete = T, begin = .3, end = .9, direction = 1)+
+        lstr
+}
+
 
 
 ## draw plots
@@ -85,11 +109,23 @@ c1 <- fig.het(sampled)
 sampled <- stratify(prob.het)
 c2 <- fig.het(sampled)
 
+h1 <- fig.hap(hapsums,'recessive')
 
-## stitch together
-f4 <- plot_grid(c1+theme(legend.position = "none"),
-                c2+theme(legend.position = "none"),ncol=1,labels='AUTO')
-f4 <- plot_grid(f4,get_legend(c1),nrow=1,rel_widths=c(.65,.1))
+h2 <- fig.hap(hapsums,'additive')
+
+
+## stitch together Fig 4
+f4 <- plot_grid(c1+theme(legend.position = 'none'),
+                h1+theme(legend.position = 'none'),ncol=1,labels='AUTO')
+f4 <- plot_grid(f4,plot_grid(get_legend(c1),get_legend(h1),ncol=1),rel_widths=c(.8,.1))
 f4
 
-saveplot(f4,'fig4-het-v') ## thesis fig 4
+saveplot(f4,'fig4-a-recload-b-hetsfs')
+
+## stitch together Fig 4
+f4s <- plot_grid(c2+theme(legend.position = 'none'),
+                 h2+theme(legend.position = 'none'),ncol=1,labels='AUTO')
+f4s <- plot_grid(f4s,plot_grid(get_legend(c2),get_legend(h2),ncol=1),rel_widths=c(.8,.1))
+f4s
+
+saveplot(f4s,'fig4s-a-addload-b-hetprob')
