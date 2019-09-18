@@ -4,8 +4,8 @@ source('source_me.R')
 #### genespace-box-combined.pdf
 
 ## read data generated in genespace_euler.R
-sum.add <- fread('output/genload/genespace_260419v4_bootstrapped_additive-6.txt',data.table=F)
-sum.rec <- fread('output/genload/genespace_260419v4_bootstrapped_recessive-6.txt',data.table=F)
+sum.add <- fread('output/genload/genespace_260419v4_600_additive1.txt',data.table=F)
+sum.rec <- fread('output/genload/genespace_260419v4_600_recessive1.txt',data.table=F)
 
 ## prepare plot
 p.agr.boxplot2 <- function(data){
@@ -37,5 +37,5 @@ p.agr.grid <- plot_grid(
 ) 
 
 ## save
-saveplot(p.agr.grid,'genespace-box-combined.pdf')
+saveplot(p.agr.grid,'genespace-box-combined')
 
