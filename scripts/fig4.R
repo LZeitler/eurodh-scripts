@@ -115,17 +115,17 @@ h2 <- fig.hap(hapsums,'additive')
 
 
 ## stitch together Fig 4
-f4 <- plot_grid(c1+theme(legend.position = 'none'),
-                h1+theme(legend.position = 'none'),ncol=1,labels='AUTO')
-f4 <- plot_grid(f4,plot_grid(get_legend(c1),get_legend(h1),ncol=1),rel_widths=c(.8,.1))
+f4 <- plot_grid(h1+theme(legend.position = 'none'),
+                c1+theme(legend.position = 'none'),ncol=1,labels='AUTO')
+f4 <- plot_grid(f4,plot_grid(get_legend(h1),get_legend(c1),ncol=1),rel_widths=c(.8,.1))
 f4
 
 saveplot(f4,'fig4-a-recload-b-hetsfs')
 
 ## stitch together Fig 4
-f4s <- plot_grid(c2+theme(legend.position = 'none'),
-                 h2+theme(legend.position = 'none'),ncol=1,labels='AUTO')
-f4s <- plot_grid(f4s,plot_grid(get_legend(c2),get_legend(h2),ncol=1),rel_widths=c(.8,.1))
+f4s <- plot_grid(h2+theme(legend.position = 'none'),
+                 c2+theme(legend.position = 'none'),ncol=1,labels='AUTO')
+f4s <- plot_grid(f4s,plot_grid(get_legend(h2),get_legend(c2),ncol=1),rel_widths=c(.8,.1))
 f4s
 
 saveplot(f4s,'fig4s-a-addload-b-hetprob')
