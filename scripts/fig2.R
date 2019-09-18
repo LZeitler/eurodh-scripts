@@ -70,7 +70,7 @@ c <- c + theme(legend.key = element_blank(),
     scale_x_continuous(breaks = c(0,.5,1))
 f2a <- c
 
-#### plot fig 2b: jProb BU chrom 3
+#### plot fig 2b: jProb BU chrom 3, all positions V4
 
 ## prepare data 
 pop.base <- 'BU'                         # which population should be compared to
