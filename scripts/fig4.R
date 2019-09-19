@@ -1,4 +1,5 @@
 source('source_me.R')
+library(multcompView);library(emmeans)  # for posthoc test and letters
 
 #### Fig 4 A (recessive load on haplotypes), Fig 4 B (Heterozygosity for aSFS),
 #### Supplementary Fig (additive load on haplotypes), Supplementary Fig (Heterozygosity for jProb)
@@ -71,31 +72,62 @@ stratify <- function(data){
 
 #### plotting
 
+## prepare test for heterozygosity
+het.test <- function(sample){
+    out <- data.frame()
+    for (ra in racess){
+        test <-
+            ifelse(mean(filter(sample,race==ra,outl==F)$hetfreq)<mean(filter(sample,race==ra,outl==T)$hetfreq),T,F)
+        out <- rbind(out,
+                     data.frame(t=test,race=ra))
+    }
+    return(out)
+}
+shuffl.test <- function(data,n=1000){
+    te <- do.call(rbind,lapply(1:n,function(x){
+        cat(x/n*100,'% \r'); flush.console()
+        return(het.test(stratify(data)))
+    }))
+    te$sig <- te$t
+    tests <- aggregate(sig~race,filter(te,sig==T),function(x) 1-length(x)/(nrow(te)/5)) %>%
+        mutate(code=ifelse(sig<0.05,'*',' '))
+    tests
+}
+
+## run tests
+tests.freq <- shuffl.test(freq.het)
+tests.prob <- shuffl.test(prob.het)
+
 ## prepare plots
 fig.het <- function(data){
     whichtest <- if (names(data)[1]=='prob') 'jProb test' else 'aSFS test'
+    tests <- if (names(data)[1]=='prob') tests.prob else tests.freq
     c <- ggplot(data)
     c <- c+geom_violin(aes(race,hetfreq,fill=outl),alpha=.8)
+    c <- c+geom_text(data=tests,aes(race,.8,label=code),size=7)
     c <- c+stat_summary(aes(race,hetfreq,group=outl),alpha=.8,
                         position=position_dodge(.9),fun.y='mean',geom='point',shape=18,size=3)
     c <- c+scale_fill_viridis(discrete = T, begin = .2, end = .8, direction = -1,labels=c('non-outlier','outlier'))
     c <- c+labs(x='Accession',y=paste0('Heterozygote frequency\n',whichtest),fill='SNP')
     c
 }
-
 fig.hap <- function(data,type='recessive'){
     if (type=='recessive') {
         var <- 'gerpr'
-        lstr <- labs(y='Load of haplotypes\nrecessive model', fill='Type',
-                     x='Accession')
+        lstr <- labs(y='Load of haplotypes\nrecessive model', fill='Type', x='Accession')
+        agr <- aggregate(gerpr~race*type,hapsums,max) %>% rename(max=gerpr)
     }
     if (type=='additive') {
         var <- 'gerpa'
-        lstr <- labs(y='Load of haplotype\nadditive model', fill='Type',
-                     x='Accession')
+        lstr <- labs(y='Load of haplotype\nadditive model', fill='Type', x='Accession')
+        agr <- aggregate(gerpa~race*type,hapsums,max) %>% rename(max=gerpa)
     }
+    adj <- lm(hapsums[,var]~hapsums$race+hapsums$type+hapsums$race*hapsums$type)
+    cld <- cld.emmGrid(emmeans(adj,~race*type),Letters=letters,adjust="tukey") %>% mutate(lttr=gsub(" ","",.group,fixed=T))
+    cld <- inner_join(cld,agr)
     ggplot(hapsums)+
         geom_boxplot(aes_string('race',var,fill='factor(type,levels=c("LR","DH"))'),alpha=.8)+
+        geom_text(data=cld,aes(race,max+120,group=factor(type,levels=c("LR","DH")),label=lttr),position=position_dodge(.75))+
         scale_fill_viridis(discrete = T, begin = .3, end = .9, direction = 1)+
         lstr
 }
@@ -113,7 +145,6 @@ h1 <- fig.hap(hapsums,'recessive')
 
 h2 <- fig.hap(hapsums,'additive')
 
-
 ## stitch together Fig 4
 f4 <- plot_grid(h1+theme(legend.position = 'none'),
                 c1+theme(legend.position = 'none'),ncol=1,labels='AUTO')
@@ -122,10 +153,18 @@ f4
 
 saveplot(f4,'fig4-a-recload-b-hetsfs')
 
-## stitch together Fig 4
+## stitch together Fig 4 Supplementary
 f4s <- plot_grid(h2+theme(legend.position = 'none'),
                  c2+theme(legend.position = 'none'),ncol=1,labels='AUTO')
 f4s <- plot_grid(f4s,plot_grid(get_legend(h2),get_legend(c2),ncol=1),rel_widths=c(.8,.1))
 f4s
 
 saveplot(f4s,'fig4s-a-addload-b-hetprob')
+
+#### GERP ANOVA and post hoc
+a1 <- aov(hapsums$gerpr~hapsums$race+hapsums$type+hapsums$race*hapsums$type)
+adj <- lm(hapsums$gerpr~hapsums$race+hapsums$type+hapsums$race*hapsums$type)
+anova(adj)
+TukeyHSD(a1)
+
+
