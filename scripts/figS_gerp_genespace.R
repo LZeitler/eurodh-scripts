@@ -7,12 +7,24 @@ source('source_me.R')
 sum.add <- fread('output/genload/genespace_260419v4_600_additive1.txt',data.table=F)
 sum.rec <- fread('output/genload/genespace_260419v4_600_recessive1.txt',data.table=F)
 
+## prepare test
+spacetest <- function(data,ptype='DH',pmodel){
+    t <- do.call(rbind,lapply(racess,function(r) {
+        tt <- t.test(filter(data,race==r,type==ptype,outl=='outlier',model==pmodel)$sum,
+                      filter(data,race==r,type==ptype,outl=='no outlier',model==pmodel)$sum)
+        c(ifelse(tt$p.value<0.05,'*',' '),mean(tt$estimate))}))
+    data.frame(race=racess,type=ptype,model=pmodel,code=t[,1],emean=as.numeric(t[,2]))
+}
+
 ## prepare plot
 p.agr.boxplot2 <- function(data){
     agr <- aggregate(sum~race*outl*ind*type*model,data,mean)
+    tests <- rbind(spacetest(agr,'LR','Recessive Model'),spacetest(agr,'DH','Recessive Model'),
+                   spacetest(agr,'LR','Additive Model'),spacetest(agr,'DH','Additive Model'))
     agr$type <- factor(agr$type,levels=c('LR','DH'))
     p <- ggplot(agr)+
         geom_boxplot(aes(race,sum,fill=outl),outlier.alpha=1,alpha=.8)+
+        geom_text(data=tests,aes(race,emean+1,label=code),size=8,color='orange')+
         stat_summary(aes(race,sum,group=paste(type,outl)),
                      position=position_dodge(.75),
                      fun.y='mean',geom='point',shape=18,size=3)+
@@ -24,7 +36,7 @@ p.agr.boxplot2 <- function(data){
               strip.text = element_text(margin=margin(.3,.3,.3,.3,'lines')),
               strip.text.x = element_text(size=13))+
         scale_fill_viridis(discrete = T, begin = .2, end = .8, direction = -1)
-    p
+    return(p)
 }
 
 ## plot everything
@@ -35,6 +47,7 @@ p.agr.grid <- plot_grid(
                          data.frame(filter(sum.add,type=='DH'),model='Additive Model')))+
     facet_grid(model~type,scales='free_y',switch='y')
 ) 
+p.agr.grid
 
 ## save
 saveplot(p.agr.grid,'genespace-box-combined')
