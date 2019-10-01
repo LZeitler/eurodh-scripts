@@ -15,6 +15,8 @@ ac <- lapply(racess, function(ra){
 ac <- do.call(rbind,ac)
 all <- left_join(ac,all,by='id')
 
+## mean errors
+aggregate(((1-accur)*100)~race,all,function(x) round(mean(x),1))
 
 ## plotting S1 top panels
 q <- ggplot(all)
