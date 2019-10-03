@@ -51,7 +51,7 @@ pidf$type <- sapply(as.character(pidf$race), function(x) unlist(strsplit(x, "_")
 pidf$pop <- sapply(as.character(pidf$race), function(x) unlist(strsplit(x, "_"))[1])
 pidf <- pidf %>% mutate(chrompos=paste0(CHROM,':',POS))
 
-trim <- data.frame()                    # remove monomorphic sites in LR-DH pairs
+trim <- data.frame()                    # remove monomorphic sites in LR-DH pairs (remove if non-poly in both)
 for (r in unique(pidf$pop)){
     w1 <- filter(pidf, pop==r, type=="LR", PI==0)$chrompos
     w2 <- filter(pidf, pop==r, type=="DH", PI==0)$chrompos
