@@ -128,17 +128,26 @@ fig1big.bot <- c + theme(legend.key = element_blank(), strip.background = elemen
 
 
 #### Stitch everything together
-fig1big.top <- plot_grid(plot_grid(p12+theme(legend.position = "none"),
+fig1big.top <- plot_grid(plot_grid(p12+
+                                   guides(color=F)+
+                                   theme(legend.position = c(.06,.17),
+                                         legend.background = element_rect(fill='white',
+                                                                          size=.3,
+                                                                          linetype='solid',
+                                                                          color='black'),
+                                         legend.margin = margin(r=.8,l=.8,t=.2,b=.2,unit='lines'),
+                                         legend.title = element_blank(),
+                                         legend.text = element_text(size=9)),
                                    p13+theme(legend.position = "none")),
                          f1b+theme(axis.title.x = element_blank(),
-                                           legend.position = c(.06,.17),
-                                           legend.background = element_rect(fill='white',
-                                                                            size=.3,
-                                                                            linetype='solid',
-                                                                            color='black'),
-                                           legend.margin = margin(r=.8,l=.8,t=.2,b=.2,unit='lines'),
-                                           legend.title = element_blank(),
-                                           legend.text = element_text(size=9)),
+                                   legend.position = c(.06,.17),
+                                   legend.background = element_rect(fill='white',
+                                                                    size=.3,
+                                                                    linetype='solid',
+                                                                    color='black'),
+                                   legend.margin = margin(r=.8,l=.8,t=.2,b=.2,unit='lines'),
+                                   legend.title = element_blank(),
+                                   legend.text = element_text(size=9)),
                          labels = 'AUTO',
                          nrow = 1)
 
@@ -146,7 +155,7 @@ fig1big <- plot_grid(fig1big.top,
                      plot_grid(fig1big.bot,labels='C'),
                      nrow = 2)
 fig1big <- plot_grid(fig1big,
-                     get_legend(p12),
+                     get_legend(p12+guides(shape=F)),
                      rel_widths = c(.93,.07))
 fig1big
 
