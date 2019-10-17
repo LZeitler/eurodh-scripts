@@ -28,3 +28,6 @@ s6 <- s6 + labs(x="Population",
 
 saveplot(s6,'supfig6')
 
+## how many snps
+aggregate(snps~set,filter(dat,haps>1,set=='50k'),mean)             # 3.6
+aggregate(snps~set,filter(dat,haps>1,snps>5,set=='600k'),mean)     # 24.1
