@@ -23,7 +23,7 @@ pcaplot <- function(data,ev.x,ev.y,...){
                                        y = paste0('PC ', ev.y, ' (',
                                                  round(pca.co$varprop[ev.y]*100,2),"%)"))
     p <- p + scale_alpha_discrete(range = c(.4, .9))+
-        scale_shape_manual(values = c(2,19,21))
+        scale_shape_manual(values = c(2,1)) # DH:2, LR:1
     p <- p + scale_color_viridis(discrete = T)
     return(p)
 }
@@ -155,7 +155,7 @@ fig1big <- plot_grid(fig1big.top,
                      plot_grid(fig1big.bot,labels='C'),
                      nrow = 2)
 fig1big <- plot_grid(fig1big,
-                     get_legend(p12+guides(shape=F)),
+                     get_legend(p12+guides(shape=F, color=guide_legend(override.aes = list(shape=15,size=5)))),
                      rel_widths = c(.93,.07))
 fig1big
 
