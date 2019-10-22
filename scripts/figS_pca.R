@@ -24,7 +24,7 @@ pcaplot <- function(data,ev.x,ev.y,...){
                                        y = paste0('PC ', ev.y, ' (',
                                                  round(pca.co$varprop[ev.y]*100,2),"%)"))
     p <- p + scale_alpha_discrete(range = c(.4, .9))+
-        scale_shape_manual(values = c(2,19,21))
+        scale_shape_manual(values = c(2,1))
     p <- p + scale_color_viridis(discrete = T)
     return(p)
 }
