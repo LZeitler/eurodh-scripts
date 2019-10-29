@@ -33,12 +33,12 @@ ph <- foverlaps(hap,prodf,type='any') %>% # window merge
 a <- ggplot(filter(ph))+
     geom_boxplot(aes(majorhap,logprob,fill=majorhap),alpha=.7)+
     facet_wrap(~pop,scales = 'free',labeller = as_labeller(racelabels))+
-    labs(y='-log10(p) (jProb)',x='Fate')+
+    labs(y='-log10(p) (jProb)',x='Fate of major haplotype')+
     scale_fill_manual(values = c('#481567FF','red','#3CBB75FF'))+
     theme(legend.position = 'none')
 a
 
-
+saveplot(a,'box-jprob-haplo')
 
 
 
