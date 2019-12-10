@@ -15,12 +15,15 @@ tab2$seg.p <- round(tab2$segregating/tab2$Sum,4)*100
 
 #### Fig 3 A: Haplotype diversity 600k
 
+lvls <- c('LR','DH')
 f3a <- unique(select(dat, chrompos, chr, pos, hapdiv, type, pop, haps)) %>%
     filter(haps>1) %>%
     ggplot()+
-    geom_boxplot(aes(x=pop,y=hapdiv,fill=type),alpha=.75)+      
-    scale_fill_viridis(discrete = T, begin = .2, end = .8)+
-    labs(x="Population",y="Haplotype diversity",fill="Type")
+    geom_boxplot(aes(x=pop,y=hapdiv,alpha=factor(type,levels=lvls),fill=pop))+
+    scale_alpha_discrete(range = c(.3, .75))+
+    scale_fill_viridis(discrete = T)+
+    labs(x="Population",y="Haplotype diversity",alpha="Type")+
+    guides(alpha = guide_legend(override.aes = list(fill = 'black')), fill = 'none')
                                                            
 
 
@@ -32,7 +35,8 @@ f3b <- f3b + geom_jitter(aes(pos/1000000, freq.LR,
                              color=factor(majorhap,
                                  labels = c(paste0('fixed:\n', filter(tab2, pop==ra)$fixed.p,' %'),
                                             paste0('lost:\n', filter(tab2, pop==ra)$lost.p,' %'),
-                                            paste0('segregating:\n', filter(tab2, pop==ra)$seg.p,' %')))),
+                                            paste0('segregating:\n', filter(tab2,
+                                                                            pop==ra)$seg.p,' %')))),
                          alpha=.8, size=.85)
 f3b <- f3b + geom_vline(data=filter(centro, chr==3),
                     aes(xintercept=pos/1000000),
