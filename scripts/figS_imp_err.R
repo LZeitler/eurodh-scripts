@@ -81,7 +81,7 @@ rsq <- format(summary(m)$r.squared, digits = 3)
 
 ## plot
 s5 <- ggplot(dist,aes(dist,1-accur))
-s5 <- s5 + geom_jitter(alpha =.5)
+s5 <- s5 + geom_jitter()
 s5 <- s5 + labs(x='Genetic distance from next known SNP [cM]', y='Error rate')
 s5 <- s5 + geom_smooth(method = 'lm',se=F)
 s5 <- s5 + annotate(geom = 'text', label=paste("R^2==",rsq),
