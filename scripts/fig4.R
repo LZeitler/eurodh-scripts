@@ -106,12 +106,16 @@ fig.het <- function(data){
     whichtest <- if (names(data)[1]=='prob') 'jProb test' else 'aSFS test'
     tests <- if (names(data)[1]=='prob') tests.prob else tests.freq
     c <- ggplot(data)
-    c <- c+geom_violin(aes(race,hetfreq,fill=outl),alpha=.8)
+    c <- c+geom_violin(aes(race,hetfreq,alpha=outl,color=race),fill='black',lwd=1)
     c <- c+geom_text(data=tests,aes(race,.8,label=code),size=7)
     c <- c+stat_summary(aes(race,hetfreq,group=outl),alpha=.8,
                         position=position_dodge(.9),fun.y='mean',geom='point',shape=18,size=3)
-    c <- c+scale_fill_viridis(discrete = T, begin = .2, end = .8, direction = -1,labels=c('non-outlier','outlier'))
-    c <- c+labs(x='Accession',y=paste0('Heterozygote frequency\n',whichtest),fill='SNP')
+    ## c <- c+scale_fill_viridis(discrete = T, begin = .2, end = .8, direction =
+    ## -1,labels=c('non-outlier','outlier'))
+    c <- c+scale_alpha_discrete(range=c(.2,.6),labels=c('non-outlier','outlier'))+
+        scale_color_viridis(discrete = T)+
+        guides(alpha = guide_legend(override.aes = list(fill = 'black', lwd = 0)), color = 'none')
+    c <- c+labs(x='Accession',y=paste0('Heterozygote frequency\n',whichtest),alpha='SNP')
     c
 }
 fig.hap <- function(data,type='recessive'){
