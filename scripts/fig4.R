@@ -98,6 +98,9 @@ shuffl.test <- function(data,n=1000){
 tests.freq <- shuffl.test(freq.het)
 tests.prob <- shuffl.test(prob.het)
 
+save(list=c("tests.freq","tests.prob"),file="output/heterozygosity_tests.Rdata")
+load("output/heterozygosity_tests.Rdata")
+
 ## prepare plots
 fig.het <- function(data){
     whichtest <- if (names(data)[1]=='prob') 'jProb test' else 'aSFS test'
@@ -114,21 +117,24 @@ fig.het <- function(data){
 fig.hap <- function(data,type='recessive'){
     if (type=='recessive') {
         var <- 'gerpr'
-        lstr <- labs(y='Load of haplotypes\nrecessive model', fill='Type', x='Accession')
+        lstr <- labs(y='Load of haplotypes\nrecessive model', alpha='Type', x='Accession')
         agr <- aggregate(gerpr~race*type,hapsums,max) %>% rename(max=gerpr)
     }
     if (type=='additive') {
         var <- 'gerpa'
-        lstr <- labs(y='Load of haplotype\nadditive model', fill='Type', x='Accession')
+        lstr <- labs(y='Load of haplotype\nadditive model', alpha='Type', x='Accession')
         agr <- aggregate(gerpa~race*type,hapsums,max) %>% rename(max=gerpa)
     }
     adj <- lm(hapsums[,var]~hapsums$race+hapsums$type+hapsums$race*hapsums$type)
     cld <- cld.emmGrid(emmeans(adj,~race*type),Letters=letters,adjust="tukey") %>% mutate(lttr=gsub(" ","",.group,fixed=T))
     cld <- inner_join(cld,agr)
     ggplot(hapsums)+
-        geom_boxplot(aes_string('race',var,fill='factor(type,levels=c("LR","DH"))'),alpha=.8)+
+        geom_boxplot(aes_string('race',var,alpha='factor(type,levels=c("LR","DH"))',fill='race'),outlier.alpha=1)+
         geom_text(data=cld,aes(race,max+120,group=factor(type,levels=c("LR","DH")),label=lttr),position=position_dodge(.75))+
-        scale_fill_viridis(discrete = T, begin = .3, end = .9, direction = 1)+
+        scale_fill_viridis(discrete = T)+
+        scale_alpha_discrete(range = c(.2, .8))+
+        guides(alpha = guide_legend(override.aes = list(fill = 'black')),
+                      fill = 'none')+
         lstr
 }
 
