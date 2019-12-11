@@ -64,7 +64,7 @@ c <- c + theme(legend.key = element_blank(),
                ## legend.text = element_text(size = 10),
                ## legend.title = element_text(size = 12)
                axis.text = element_text(size = 16),
-               axis.title = element_text(size = 20),
+               axis.title = element_text(size = 18),
                legend.text = element_text(size = 14),
                legend.title = element_text(size = 16))+
     scale_x_continuous(breaks = c(0,.5,1))
@@ -100,14 +100,14 @@ m <- m + guides(colour = guide_legend(override.aes = list(size=5,alpha=1)))
 m <- m + theme(legend.key = element_blank(),
                strip.background = element_blank(),
                axis.text = element_text(size = 16),
-               axis.title = element_text(size = 20),
+               axis.title = element_text(size = 18),
                legend.text = element_text(size = 14),
                legend.title = element_text(size = 16))
 m <- m + geom_vline(data=filter(centro, chr==3),
                     aes(xintercept=pos/1000000),
                     linetype="dashed",
                     size=.3)
-f2b <- m + labs(y=paste("-log10(p) of", pop.base),x='Position on chromosome 3 [Mbp]', color='Overlap')
+f2b <- m + labs(y=paste("-log10(p) of SNPs in", pop.base, '      '),x='Position on chromosome 3 [Mbp]', color='Overlap')
 
 
 ## save plot
