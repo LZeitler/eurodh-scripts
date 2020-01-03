@@ -43,3 +43,33 @@ print(tibble(res1),n=28)
 lapply(traits, function(x) filter(res1,Trait==x))
            
 fwrite(res1,'gwas_aov_table.txt')
+
+
+#### explain interaction of frequency and outlier
+comb %>%
+    group_by(race,trait,outl,lrfreq) %>%
+    summarise(meaneffect=mean(effect),
+              medianeffect=median(effect)) -> meff
+
+meff %>%
+    ggplot(aes(as.numeric(as.character(lrfreq)),abs(meaneffect),color=outl,shape=outl))+
+    geom_point()+
+    ## geom_smooth(aes(linetype=outl))+
+    geom_smooth(aes(linetype=outl),method='glm')+
+    facet_grid(race~trait,scales='free')
+
+
+comb %>%
+    ggplot(aes(as.numeric(as.character(lrfreq)),effect))+
+    ## geom_bin2d()+
+    geom_smooth(aes(linetype=outl),method = 'glm')+
+    facet_grid(race~trait,scales='free')
+    ## ylim(-.004,.004)
+
+g <- ggplot()+
+    geom_point(data=meff,aes(as.numeric(as.character(lrfreq)),meaneffect,color=outl,shape=outl))+
+    geom_smooth(data=comb,aes(as.numeric(as.character(lrfreq)),effect,color=outl),method = 'glm')+
+    facet_wrap(race~trait,scales='free',nrow=3)+
+    labs(x='allele frequency',y='mean effect',color='Outlier',shape='Outlier')
+
+ggsave('~/ma/r/plot/gwas-effect-freq-interaction.pdf',g,width = 16,height = 9)
