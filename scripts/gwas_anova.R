@@ -25,7 +25,8 @@ ef <- do.call(rbind,ef) %>%
 # combine frequecies, effect sizes and outlier class
 comb <- get.freq('../freq_221118.txt') %>% filter(!race=='WA') %>%
     inner_join(select(ef,SNP,effect,trait,PIP),by=c('snp'='SNP')) %>%
-    mutate(lrfreq=factor(round(l/(2*sL),1))) # this makes 11 allele frequency bins
+    mutate(lrfreqn=l/(2*sL))
+comb$lrfreq <- cut(comb$lrfreqn,10)
 
 ## fit model
 traits <- unique(comb$trait)
