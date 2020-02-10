@@ -26,15 +26,25 @@ ef <- do.call(rbind,ef) %>%
 comb <- get.freq('../freq_221118.txt') %>% filter(!race=='WA') %>%
     inner_join(select(ef,SNP,effect,trait,PIP),by=c('snp'='SNP')) %>%
     mutate(lrfreqn=l/(2*sL))
-comb$lrfreq <- cut(comb$lrfreqn,10)
+comb$lrfreq <- cut(comb$lrfreqn,10)     # binning
+
+comb <- comb %>%
+    mutate(SNP=ifelse(outl,'outlier','non-outlier'),
+           abseffect=abs(effect),
+           lrfreqbin=as.numeric(lrfreq)/10-.05)  %>%  # mean allele freq in bin
+    group_by(race,trait,SNP,lrfreq,lrfreqbin) %>%
+    mutate(meanabseffect=mean(abseffect))
 
 ## fit model
 traits <- unique(comb$trait)
+traitlabels <- c('shoot vigor', 'female flowering','fusarium','grain yield','oil content','plant height','protein content')
+names(traitlabels) <- traits
 
-res1 <- comb %>% group_by(trait) %>% 
-    do(tidy(aov(effect~outl*lrfreq,data=.))) %>%
+res1 <- comb %>%
+    group_by(trait) %>%
+    do(tidy(aov(abseffect~outl*lrfreq,data=.))) %>%
     data.frame
-res1[,4:7] <- apply(res1[,4:7],2,function(x) signif(x,3))
+res1[,3:7] <- apply(res5[,3:7],2,function(x) signif(x,3))
 names(res1) <- c('Trait','Term','df','SumSq','MeanSq','F-value','p-value')
 
 ## print table
@@ -45,77 +55,18 @@ lapply(traits, function(x) filter(res1,Trait==x))
            
 fwrite(res1,'gwas_aov_table.txt')
 
-
-####
-library(lmer4)
-library(lmerTest)
-library(pbkrtest)
-
-comb2 <- comb %>%
-    mutate(lrfreqb=as.numeric(lrfreq)/10)
-
-res2 <- comb2 %>% 
-    group_by(trait) %>%
-    do(tidy(anova(lmer(effect~outl+(1|lrfreqb),data=.),ddf="Kenward-Roger"))) %>%
-    data.frame
-
-res2[,3:8] <- apply(res2[,3:8],2,function(x) signif(x,3))
-
-mdl <- lmer(effect~outl*(1|lrfreqb),data=filter(comb2,trait=='grain_yield'),REML=F)
-mdl1 <- lmer(effect~(1|lrfreqb),data=filter(comb2,trait=='grain_yield'),REML=F)
-
-summary(mdl)
-anova(mdl)
-ranova(mdl)
-
-
-res3 <- comb2 %>% 
-    group_by(trait) %>%
-    do(tidy(aov(effect~outl,data=.))) %>%
-    data.frame
-
-res3[,3:7] <- apply(res3[,3:7],2,function(x) signif(x,3))
-
-
-res4 <- comb %>% 
-    group_by(trait) %>%
-    do(tidy(aov(effect~outl+lrfreq,data=.))) %>%
-    data.frame
-
-res4[,3:7] <- apply(res4[,3:7],2,function(x) signif(x,3))
-
-
-res5 <- comb %>%
-    mutate(abseffect=abs(effect)) %>% 
-    group_by(trait) %>%
-    do(tidy(aov(abseffect~outl*lrfreq,data=.))) %>%
-    data.frame
-
-res5[,3:7] <- apply(res5[,3:7],2,function(x) signif(x,3))
-
-
 #### explain interaction of frequency and outlier
-comb <- comb %>%
-    mutate(SNP=ifelse(outl,'outlier','non-outlier'),
-           abseffect=abs(effect),
-           lrfreqbin=as.numeric(lrfreq)/10-.05) # mean allele freq in bin
 
-meff <- comb %>%
-    group_by(race,trait,SNP,lrfreq,lrfreqbin) %>%
-    summarise(meanabseffect=mean(abseffect)) 
-
-traitlabels <- c('shoot vigor', 'female flowering','fusarium','grain yield','oil content','plant height','protein content')
-names(traitlabels) <- traits
-
-g <- ggplot()+
-    geom_point(data=meff,aes(lrfreqbin,meanabseffect,
+g <- ggplot(comb)+
+    geom_point(aes(lrfreqbin,meanabseffect,
                              color=SNP,
                              shape=SNP))+
-    geom_smooth(data=comb,aes(lrfreqbin,abseffect,color=SNP),method = 'lm')+
-    facet_wrap(~trait,scales='free',nrow=3,labeller = as_labeller(traitlabels))+
+    geom_smooth(aes(lrfreqbin,abseffect,color=SNP),method='lm')+
+    facet_wrap(~trait,scales='free',nrow=3,labeller=as_labeller(traitlabels))+
     labs(x='allele frequency bin',y='mean absolute effect')
 g
 
-ggsave('~/ma/r/plot/gwas-abseffect-freq-interaction.pdf',g,width = 16,height = 9)
-
+## ggsave('~/ma/r/plot/gwas-abseffect-freq-interaction.pdf',g,width = 10,height = 6)
+setwd('../..')
+saveplot(g,'gwas-freq-vs-effects',12,7)
 
