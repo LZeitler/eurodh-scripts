@@ -176,12 +176,13 @@ source('scripts/gwas_anova.R')
 mytraits <- c('grain_yield','Early_vigor','plant_heigh')
 
 f4g <- gwasplt(filter(comb,trait%in%mytraits),nrow=1)
-f4a <- plot_grid(f4g+theme(legend.position = 'none'),
-                 c1+theme(legend.position = 'none'),ncol=1,labels='AUTO')
+f4a <- plot_grid(
+    c1+theme(legend.position = 'none'),
+    f4g+theme(legend.position = 'none'),ncol=1,labels='AUTO')
 f4a <- plot_grid(f4a,plot_grid(get_legend(f4g),ncol=1),rel_widths=c(.8,.1))
 f4a
 
-saveplot(f4a,'fig4-a-effects-b-hetsfs')
+saveplot(f4a,'fig4-b-effects-a-hetsfs')
 
 ## stitch together Fig 4 Supplementary
 f4s <- plot_grid(h2+theme(legend.position = 'none'),
