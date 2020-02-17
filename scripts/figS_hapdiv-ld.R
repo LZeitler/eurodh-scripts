@@ -60,4 +60,4 @@ f3 <- plot_grid(f3a,
                 hjust = -1, vjust = c(1.5,.5),
                 nrow = 2)
 
-saveplot(f3, "fig3-ld")
+saveplot(f3, "fig3-ld-50k")
