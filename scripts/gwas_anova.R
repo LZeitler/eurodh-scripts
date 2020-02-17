@@ -53,20 +53,32 @@ print(tibble(res1),n=28)
 ## output trait specific
 lapply(traits, function(x) filter(res1,Trait==x))
            
-fwrite(res1,'gwas_aov_table.txt')
+if (!exists('sourced')) fwrite(res1,'gwas_aov_table.txt')
 
 #### explain interaction of frequency and outlier
 
-g <- ggplot(comb)+
-    geom_point(aes(lrfreqbin,meanabseffect,
-                             color=SNP,
-                             shape=SNP))+
-    geom_smooth(aes(lrfreqbin,abseffect,color=SNP),method='lm')+
-    facet_wrap(~trait,scales='free',nrow=3,labeller=as_labeller(traitlabels))+
-    labs(x='allele frequency bin',y='mean absolute effect')
-g
+gwasplt <- function(data,nrow=3){
+    comb <- data
+    g <- ggplot(comb)+
+        geom_point(aes(lrfreqbin,meanabseffect,
+                       color=SNP))+
+        geom_smooth(aes(lrfreqbin,abseffect,color=SNP),method='lm')+
+        facet_wrap(~trait,scales='free',nrow=nrow,labeller=as_labeller(traitlabels))+
+        labs(x='Allele frequency',y='Mean absolute effect')+
+        guides(color=guide_legend(override.aes=list(shape=15,size=5,fill=NA)))
+    g
+}
+
+if (!exists('sourced')) {
+    g <- gwasplt(comb)
+
+    mytraits <- c('grain_yield','Early_vigor','plant_heigh')
+    g2 <- gwasplt(filter(comb,!trait%in%mytraits),2)
 
 ## ggsave('~/ma/r/plot/gwas-abseffect-freq-interaction.pdf',g,width = 10,height = 6)
-setwd('../..')
-saveplot(g,'gwas-freq-vs-effects',12,7)
+    setwd('../..')
+    saveplot(g,'gwas-freq-vs-effects',12,7)
+    saveplot(g2,'gwas-freq-vs-effects-alt')
+}
+
 
