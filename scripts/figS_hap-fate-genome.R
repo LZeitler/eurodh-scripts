@@ -4,7 +4,7 @@ source('source_me.R')
 #### s3a_all.pdf
 
 ## prepare data
-source('scripts/make_hapdiv.R')
+source('scripts/make_hapdiv_ld_600.R')
 
 ## plot
 s3a <- ggplot(hapdi)
@@ -30,4 +30,4 @@ s3a <- s3a + coord_cartesian(ylim = c(0,1))
 s3a <- s3a + scale_x_continuous(breaks = seq(0,500,100))
 s3a
 
-saveplot(s3a,'s3a_all',10*1.5,6*1.5)
+saveplot(s3a,'s3a_all-ld',10*1.5,6*1.5)
