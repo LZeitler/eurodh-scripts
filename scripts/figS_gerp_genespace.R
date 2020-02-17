@@ -7,11 +7,15 @@ source('source_me.R')
 sum.add <- fread('output/genload/genespace_260419v4_600_additive1.txt',data.table=F)
 sum.rec <- fread('output/genload/genespace_260419v4_600_recessive1.txt',data.table=F)
 
+## rename
+sum.add[which(sum.add[,'outl']=='no outlier'),'outl'] <- 'non-outlier'
+sum.rec[which(sum.rec[,'outl']=='no outlier'),'outl'] <- 'non-outlier'
+
 ## prepare test
 spacetest <- function(data,ptype='DH',pmodel){
     t <- do.call(rbind,lapply(racess,function(r) {
         tt <- t.test(filter(data,race==r,type==ptype,outl=='outlier',model==pmodel)$sum,
-                      filter(data,race==r,type==ptype,outl=='no outlier',model==pmodel)$sum)
+                      filter(data,race==r,type==ptype,outl=='non-outlier',model==pmodel)$sum)
         c(ifelse(tt$p.value<0.05,'*',' '),mean(tt$estimate))}))
     data.frame(race=racess,type=ptype,model=pmodel,code=t[,1],emean=as.numeric(t[,2]))
 }
@@ -31,11 +35,10 @@ p.agr.boxplot2 <- function(data){
         scale_alpha_discrete(range = c(.1, .95))+
         guides(alpha = guide_legend(override.aes = list(fill = 'black')))+
         labs(x='Accession',y='Mean genetic load', # y='mean GERP sum in 1 cM region'
-             fill='SNP type', alpha='Population')+
+             fill='SNP', alpha='Population')+
         theme(strip.background = element_rect(fill='grey95'),
               strip.text = element_text(margin=margin(.3,.3,.3,.3,'lines')),
-              strip.text.x = element_text(size=13))+
-        scale_fill_viridis(discrete = T, begin = .2, end = .8, direction = -1)
+              strip.text.x = element_text(size=13))
     return(p)
 }
 
