@@ -44,7 +44,7 @@ res1 <- comb %>%
     group_by(trait) %>%
     do(tidy(aov(abseffect~outl*lrfreq,data=.))) %>%
     data.frame
-res1[,3:7] <- apply(res5[,3:7],2,function(x) signif(x,3))
+res1[,3:7] <- apply(res1[,3:7],2,function(x) signif(x,3))
 names(res1) <- c('Trait','Term','df','SumSq','MeanSq','F-value','p-value')
 
 ## print table
@@ -59,10 +59,12 @@ if (!exists('sourced')) fwrite(res1,'gwas_aov_table.txt')
 
 gwasplt <- function(data,nrow=3){
     comb <- data
+    comb1 <- comb %>% ungroup %>%       # this prevent overplotting, same aesthetics
+        select(lrfreqbin,meanabseffect,SNP,trait) %>% unique
     g <- ggplot(comb)+
-        geom_point(aes(lrfreqbin,meanabseffect,
+        geom_point(data=comb1,aes(lrfreqbin,meanabseffect,
                        color=SNP))+
-        geom_smooth(aes(lrfreqbin,abseffect,color=SNP),method='lm')+
+        geom_smooth(aes(lrfreqbin,abseffect,color=SNP),method='lm',se=T)+
         facet_wrap(~trait,scales='free',nrow=nrow,labeller=as_labeller(traitlabels))+
         labs(x='Allele frequency',y='Mean absolute effect')+
         guides(color=guide_legend(override.aes=list(shape=15,size=5,fill=NA)))
