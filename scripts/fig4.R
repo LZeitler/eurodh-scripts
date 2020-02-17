@@ -37,7 +37,9 @@ hetcount <- function(prefix){
 }
 
 counts <- hetcount('data/260419_step6_red_v4_') # positions v4
-fwrite(counts,'output/het/260419_step6_red_v4_freqx.txt',sep='\t')
+## fwrite(counts,'output/het/260419_step6_red_v4_freqx.txt',sep='\t')
+
+counts <- fread('output/het/260419_step6_red_v4_freqx.txt',data.table=F)
 
 ## prepare SNP LD pruning
 system('plink --vcf data/260419_step6_red_v4_LR.vcf --indep-pairphase 500 500 0.2 --out output/prune/prune')
@@ -106,7 +108,12 @@ fig.het <- function(data){
     whichtest <- if (names(data)[1]=='prob') 'jProb test' else 'aSFS test'
     tests <- if (names(data)[1]=='prob') tests.prob else tests.freq
     c <- ggplot(data)
-    c <- c+geom_violin(aes(race,hetfreq,alpha=outl,color=race),fill='black',lwd=1)
+    c <- c+geom_violin(aes(race,hetfreq,
+                           ## alpha=outl,
+                           color=race,
+                           fill=outl),
+                       ## fill='black',
+                       lwd=1)
     c <- c+geom_text(data=tests,aes(race,.8,label=code),size=7)
     c <- c+stat_summary(aes(race,hetfreq,group=outl),alpha=.8,
                         position=position_dodge(.9),fun.y='mean',geom='point',shape=18,size=3)
@@ -134,7 +141,7 @@ fig.hap <- function(data,type='recessive'){
     cld <- inner_join(cld,agr)
     ggplot(hapsums)+
         geom_boxplot(aes_string('race',var,alpha='factor(type,levels=c("LR","DH"))',fill='race'),outlier.alpha=1)+
-        geom_text(data=cld,aes(race,max+120,group=factor(type,levels=c("LR","DH")),label=lttr),position=position_dodge(.75))+
+        ## geom_text(data=cld,aes(race,max+120,group=factor(type,levels=c("LR","DH")),label=lttr),position=position_dodge(.75))+
         scale_fill_viridis(discrete = T)+
         scale_alpha_discrete(range = c(.2, .8))+
         guides(alpha = guide_legend(override.aes = list(fill = 'black')),
@@ -163,18 +170,38 @@ f4
 
 saveplot(f4,'fig4-a-recload-b-hetsfs')
 
+## stitch together Fig 4 (alternative)
+sourced <- T
+source('scripts/gwas_anova.R')
+mytraits <- c('grain_yield','Early_vigor','plant_heigh')
+
+f4g <- gwasplt(filter(comb,trait%in%mytraits),nrow=1)
+f4a <- plot_grid(f4g+theme(legend.position = 'none'),
+                 c1+theme(legend.position = 'none'),ncol=1,labels='AUTO')
+f4a <- plot_grid(f4a,plot_grid(get_legend(f4g),ncol=1),rel_widths=c(.8,.1))
+f4a
+
+saveplot(f4a,'fig4-a-effects-b-hetsfs')
+
 ## stitch together Fig 4 Supplementary
 f4s <- plot_grid(h2+theme(legend.position = 'none'),
                  c2+theme(legend.position = 'none'),ncol=1,labels='AUTO')
-f4s <- plot_grid(f4s,plot_grid(get_legend(h2),get_legend(c2),ncol=1),rel_widths=c(.8,.1))
+f4s <- plot_grid(f4s,plot_grid(get_legend(h2),get_legend(f4g),ncol=1),rel_widths=c(.8,.1))
 f4s
 
 saveplot(f4s,'fig4s-a-addload-b-hetprob')
+
+## Fig Supplementary (Hets jProb only)
+f4_c2 <- plot_grid(c2+theme(legend.position = 'none'),
+                   get_legend(f4g),ncol=2,rel_widths=c(.8,.1))
+
+saveplot(f4_c2,'fig4s-hetprob')
 
 #### GERP ANOVA and post hoc
 a1 <- aov(hapsums$gerpr~hapsums$race+hapsums$type+hapsums$race*hapsums$type)
 adj <- lm(hapsums$gerpr~hapsums$race+hapsums$type+hapsums$race*hapsums$type)
 anova(adj)
 TukeyHSD(a1)
+
 
 
