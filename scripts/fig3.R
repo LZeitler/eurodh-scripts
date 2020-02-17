@@ -1,7 +1,7 @@
 source('source_me.R')
 
 #### prepare data
-source('scripts/make_hapdiv.R')
+source('scripts/make_hapdiv_ld_600.R')
 
 ## count haplotype classes, numbers
 tab <- data.frame(addmargins(table(select(hapdi, pop, majorhap))))
@@ -9,7 +9,7 @@ tab2 <- spread(tab,majorhap,Freq)
 tab2$fixed.p <- round(tab2$fixed/tab2$Sum,4)*100 
 tab2$lost.p <- round(tab2$lost/tab2$Sum,4)*100
 tab2$seg.p <- round(tab2$segregating/tab2$Sum,4)*100
-
+hapdi %>% group_by(type,pop) %>% summarise(mean(snps))
 
 
 
@@ -60,4 +60,4 @@ f3 <- plot_grid(f3a,
                 hjust = -1, vjust = c(1.5,.5),
                 nrow = 2)
 
-saveplot(f3, "fig3")
+saveplot(f3, "fig3-ld")
