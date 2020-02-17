@@ -196,7 +196,7 @@ saveplot(f4s,'fig4s-a-addload-b-hetprob')
 f4_c2 <- plot_grid(c2+theme(legend.position = 'none'),
                    get_legend(f4g),ncol=2,rel_widths=c(.8,.1))
 
-saveplot(f4_c2,'fig4s-hetprob')
+saveplot(f4_c2,'fig4s-hetprob',height = 4)
 
 #### GERP ANOVA and post hoc
 a1 <- aov(hapsums$gerpr~hapsums$race+hapsums$type+hapsums$race*hapsums$type)
