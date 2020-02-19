@@ -37,4 +37,4 @@ hapdi <- hapdi %>% mutate(N.LR=ifelse(race=='BU_LR',22,
                 hapdiv.LR=hapdiv.LR*(N.LR/(N.LR-1)))
 
 ## filter out short haplotypes
-hapdi <- filter(hapdi, snps>5) 
+## hapdi <- filter(hapdi, snps>5) 

@@ -9,8 +9,8 @@ tab2 <- spread(tab,majorhap,Freq)
 tab2$fixed.p <- round(tab2$fixed/tab2$Sum,4)*100 
 tab2$lost.p <- round(tab2$lost/tab2$Sum,4)*100
 tab2$seg.p <- round(tab2$segregating/tab2$Sum,4)*100
-
-
+mns <- hapdi %>% group_by(type,pop) %>% summarise(mean(snps)) %>% data.frame
+mean(as.numeric(mns[,3]))
 
 
 #### Fig 3 A: Haplotype diversity 600k
