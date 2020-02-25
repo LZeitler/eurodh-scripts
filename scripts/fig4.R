@@ -110,19 +110,18 @@ fig.het <- function(data){
     c <- ggplot(data)
     c <- c+geom_violin(aes(race,hetfreq,
                            ## alpha=outl,
-                           color=race,
+                           ## color=race,
                            fill=outl),
                        ## fill='black',
                        lwd=1)
     c <- c+geom_text(data=tests,aes(race,.8,label=code),size=7)
     c <- c+stat_summary(aes(race,hetfreq,group=outl),alpha=.8,
                         position=position_dodge(.9),fun.y='mean',geom='point',shape=18,size=3)
-    ## c <- c+scale_fill_viridis(discrete = T, begin = .2, end = .8, direction =
-    ## -1,labels=c('non-outlier','outlier'))
+    c <- c+scale_fill_discrete(labels=c('non-outlier','outlier'))
     c <- c+scale_alpha_discrete(range=c(.2,.6),labels=c('non-outlier','outlier'))+
         scale_color_viridis(discrete = T)+
         guides(alpha = guide_legend(override.aes = list(fill = 'black', lwd = 0)), color = 'none')
-    c <- c+labs(x='Accession',y=paste0('Heterozygote frequency\n',whichtest),alpha='SNP')
+    c <- c+labs(x='Accession',y=paste0('Observed heterozygosity\n',whichtest),fill='SNP')
     c
 }
 fig.hap <- function(data,type='recessive'){
@@ -183,6 +182,15 @@ f4a <- plot_grid(f4a,plot_grid(get_legend(f4g),ncol=1),rel_widths=c(.8,.1))
 f4a
 
 saveplot(f4a,'fig4-b-effects-a-hetsfs')
+
+## stitch together Fig 4 (alternative 2)
+f4 <- plot_grid(c1+theme(legend.position = 'none'),
+                c2+theme(legend.position = 'none'),ncol=1,labels='AUTO')
+f4 <- plot_grid(f4,plot_grid(get_legend(c1),ncol=1),rel_widths=c(.8,.1))
+f4
+
+saveplot(f4,'fig4-het-v')
+
 
 ## stitch together Fig 4 Supplementary
 f4s <- plot_grid(h2+theme(legend.position = 'none'),
