@@ -8,7 +8,7 @@ source('source_me.R')
 dat <- data.frame()
 for (race in races){
     fr1 <- unique(fread(paste0("output/hapex/hapseq_600k_v4_",race,".vcf.txt"),data.table=F,drop=c(1:2,8)))
-    fr2 <- unique(fread(paste0("output/hapex/hapseq_55k_v4_",race,".txt"),data.table=F,drop=c(1:2,8)))
+    fr2 <- unique(fread(paste0("output/hapex/hapseq_55k_v4_ld_",race,".txt"),data.table=F,drop=c(1:2,8)))
     dat <- rbind(dat, data.frame(fr1,race,set='600k'))
     dat <- rbind(dat, data.frame(fr2,race,set='50k'))
 }
@@ -29,5 +29,5 @@ s6 <- s6 + labs(x="Population",
 saveplot(s6,'supfig6')
 
 ## how many snps for haplotype fate analyses
-aggregate(snps~set,filter(dat,haps>1,set=='50k'),mean)             # 3.6
-aggregate(snps~set,filter(dat,haps>1,snps>5,set=='600k'),mean)     # 24.1
+aggregate(snps~set,filter(dat,haps>1,set=='50k'),mean)             # 8.7
+aggregate(snps~set,filter(dat,haps>1,snps>5,set=='600k'),mean)     # 21.2
