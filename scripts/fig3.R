@@ -1,7 +1,7 @@
 source('source_me.R')
 
 #### prepare data
-source('scripts/make_hapdiv_ld_600.R')
+source('scripts/make_hapdiv.R')
 
 ## count haplotype classes, numbers
 tab <- data.frame(addmargins(table(select(hapdi, pop, majorhap))))
