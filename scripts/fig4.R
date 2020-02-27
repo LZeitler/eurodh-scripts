@@ -191,6 +191,8 @@ f4
 
 saveplot(f4,'fig4-het-v')
 
+## fig 4 alternative 3 (het aSFS only)
+saveplot(c1,'fig4s-hetasfs',height = 4)
 
 ## stitch together Fig 4 Supplementary
 f4s <- plot_grid(h2+theme(legend.position = 'none'),
@@ -201,10 +203,7 @@ f4s
 saveplot(f4s,'fig4s-a-addload-b-hetprob')
 
 ## Fig Supplementary (Hets jProb only)
-f4_c2 <- plot_grid(c2+theme(legend.position = 'none'),
-                   get_legend(f4g),ncol=2,rel_widths=c(.8,.1))
-
-saveplot(f4_c2,'fig4s-hetprob',height = 4)
+saveplot(c2,'fig4s-hetprob',height = 4)
 
 #### GERP ANOVA and post hoc
 a1 <- aov(hapsums$gerpr~hapsums$race+hapsums$type+hapsums$race*hapsums$type)
