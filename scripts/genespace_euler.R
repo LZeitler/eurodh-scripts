@@ -97,7 +97,7 @@ for (r in races){
         hi <- outls$cm+.5               # cm limit of upper bound
         nlo <- noutls$cm-.5             # cm limit of lower bound (non outlier)
         nhi <- noutls$cm+.5             # cm limit of upper bound (non outlier)
-        sumsl <- mapply(function(l,h){          # for non outlier
+        sumsl <- mapply(function(l,h){          # for outlier
             il <- which.min(abs(all$cm-l)) # index of lower bound
             ih <- which.min(abs(all$cm-h)) # index of higher bound
             c(sum(all[il:ih,'gerp']),mean(all[il:ih,'gerp']),length(all[il:ih,'gerp']))
