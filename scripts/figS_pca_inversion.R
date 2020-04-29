@@ -18,6 +18,7 @@ system("ex -sc '1i|##fileformat=VCFv4.0' -cx data/260419_step6_v4_BU_LR_chr3_myw
 
 snps <- read_vcf(winfilename)
 pos <- as.vector(fread(winfilename,data.table=F)[,2])
+posend <- pos[seq(1,length(pos)-winsize,winsize)+winsize-1]
 pos <- pos[seq(1,length(pos)-winsize,winsize)]
 pcs <- eigen_windows(snps,k=2,win=winsize)
 
@@ -31,13 +32,14 @@ pdt$variable <- NULL
 pdt <- inner_join(filter(pdt,Axis==1),filter(pdt,Axis==2),by=c('ind','windows'))
 pdt <- inner_join(pdt,data.frame(pos,windows=1:nrow(pcs)))
 pdt <- full_join(pdt,data.frame(ind=filter(pdt,windows==4)$ind, # add cluster variable based on #4
-                                cluster=cut(filter(pdt,windows==4)$value.x,3)),by='ind') 
+                                cluster=cut(filter(pdt,windows==4)$value.x,3)),by='ind')
+pdt$facetlabel <- paste('position',pos,'to\n',posend)
 
 a <- ggplot(pdt)+
     geom_point(aes(value.x,value.y,color=cluster))+
-    labs(x='Coord1',y='Coord2')+
+    labs(x='Coord 1',y='Coord 2')+
     theme(legend.position='none')+
-    facet_wrap(~pos)
+    facet_wrap(~facetlabel)
 a
 
 saveplot(a,'bu_chr3_localpca-60100-pc12-50120')
