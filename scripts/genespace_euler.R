@@ -63,20 +63,18 @@ sample_equal <- function(dt1,dt2,variable){
 }
 
 for (r in races){
+    vcff <- fread(paste0('260419_step6_v4_',r,'.vcf'), data.table = F)
+    inds <- names(vcff)[10:length(names(vcff))]
+    ty <- substr(inds[1],1,2)
+    ra <- substr(inds[1],4,5)        
+
     for (ch in 1:10){
 
-        vcff <- fread(paste0('260419_step6_v4_',r,'.vcf'), data.table = F)
-        inds <- names(vcff)[10:length(names(vcff))]
-        ty <- substr(inds[1],1,2)
-        ra <- substr(inds[1],4,5)        
         outls <- filter(gerpo, chr==ch, race==ra, outl==T)
         noutls <- filter(gerpo, chr==ch, race==ra, outl==F)
 
         ## downsampling (comment out if not needed)
         dsamp <- do.call(rbind,sample_equal(noutls,outls,'cut.freq.rec'))
-        ## noutlss <- filter(dsamp,outl==F)
-        ## outlss <- filter(dsamp,outl==T)
-        means50[[paste(r,ch)]] <- dsamp # store for direct comparison later
 
         ## genotypes and match alleles
         gt <- filter(vcff[,c('ID',inds)],ID%in%c(noutls$snp,outls$snp)) %>%

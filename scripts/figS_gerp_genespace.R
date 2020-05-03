@@ -4,8 +4,8 @@ source('source_me.R')
 #### genespace-box-combined.pdf
 
 ## read data generated in genespace_euler.R
-sum.add <- fread('output/genload/genespace_260419v4_600_additive1.txt',data.table=F)
-sum.rec <- fread('output/genload/genespace_260419v4_600_recessive1.txt',data.table=F)
+sum.add <- fread('output/genload/genespace_260419v4_600_additive_seed123.txt',data.table=F)
+sum.rec <- fread('output/genload/genespace_260419v4_600_recessive_seed123.txt',data.table=F)
 
 ## rename
 sum.add[which(sum.add[,'outl']=='no outlier'),'outl'] <- 'non-outlier'
