@@ -112,7 +112,7 @@ for (r in races){
             }, lo, hi)
             sums <- data.frame(dsamp$snp,t(sumsl),dsamp$cut.freq.rec,dsamp$outl,stringsAsFactors=F)
             names(sums) <- c("snp","sum.a","mean.a","count.a","sum.r","mean.r","count.r",'cut.freq.rec','outl')
-            sums$outl <- ifelse(sums$outl,'outlier','no outlier')
+            sums$outl <- ifelse(sums$outl,'outlier','non-outlier')
 
             sums.r <- sums %>%
                 select(-sum.a,-mean.a,-count.a,sum=sum.r,mean=mean.r,count=count.r,cut.freq.rec,outl) %>%

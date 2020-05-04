@@ -7,10 +7,6 @@ source('source_me.R')
 sum.add <- fread('output/genload/genespace_260419v4_600_additive_seed123.txt',data.table=F)
 sum.rec <- fread('output/genload/genespace_260419v4_600_recessive_seed123.txt',data.table=F)
 
-## rename
-sum.add[which(sum.add[,'outl']=='no outlier'),'outl'] <- 'non-outlier'
-sum.rec[which(sum.rec[,'outl']=='no outlier'),'outl'] <- 'non-outlier'
-
 ## prepare test
 spacetest <- function(data,ptype='DH',pmodel){
     t <- do.call(rbind,lapply(racess,function(r) {
