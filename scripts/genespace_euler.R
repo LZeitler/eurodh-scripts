@@ -73,9 +73,6 @@ for (r in races){
         outls <- filter(gerpo, chr==ch, race==ra, outl==T)
         noutls <- filter(gerpo, chr==ch, race==ra, outl==F)
 
-        ## downsampling (comment out if not needed)
-        dsamp <- do.call(rbind,sample_equal(noutls,outls,'cut.freq.rec'))
-
         ## genotypes and match alleles
         gt <- filter(vcff[,c('ID',inds)],ID%in%c(noutls$snp,outls$snp)) %>%
             rename(snp=ID)
@@ -86,7 +83,10 @@ for (r in races){
         
         ## parse through individuals 
         for (ind in inds){
-            
+
+            ## downsampling (comment out if not needed)
+            dsamp <- do.call(rbind,sample_equal(noutls,outls,'cut.freq.rec'))
+
             gerp.here <- inner_join(gerp.local,
                                     data.frame(snp=gt$snp,
                                                hap1=as.integer(substr(gt[,ind],0,1)),

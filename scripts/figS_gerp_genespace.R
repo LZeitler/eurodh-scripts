@@ -4,8 +4,8 @@ source('source_me.R')
 #### genespace-box-combined.pdf
 
 ## read data generated in genespace_euler.R
-sum.add <- fread('output/genload/genespace_260419v4_600_additive_seed123.txt',data.table=F)
-sum.rec <- fread('output/genload/genespace_260419v4_600_recessive_seed123.txt',data.table=F)
+sum.add <- fread('output/genload/genespace_260419v4_additive_seed123.txt',data.table=F)
+sum.rec <- fread('output/genload/genespace_260419v4_recessive_seed123.txt',data.table=F)
 
 ## prepare test
 spacetest <- function(data,ptype='DH',pmodel){
