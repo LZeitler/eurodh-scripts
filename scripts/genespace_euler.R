@@ -120,7 +120,7 @@ for (r in races){
             
             fwrite(                     # write recessive
                 sums.r,
-                'genespace_260419v4_600_recessive_seed123.txt',
+                'genespace_260419v4_recessive_seed123.txt',
                 sep = '\t', append = T)
 
             sums.a <- sums %>%
@@ -129,7 +129,7 @@ for (r in races){
             
             fwrite(                     # write recessive
                 sums.a,
-                'genespace_260419v4_600_additive_seed123.txt',
+                'genespace_260419v4_additive_seed123.txt',
                 sep = '\t', append = T)
 
             ## status report
