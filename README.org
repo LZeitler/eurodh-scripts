@@ -8,7 +8,7 @@
    This is a repository to recreate plots of the EuroDH project. For more information on this see https://www.g3journal.org/content/early/2020/05/28/g3.120.401196.
 
 ** Data
-   Data (vcf files, gerp annotations, genetic map, imputation outputs) can be found as supplementary dataset of the paper ([[doi.org/10.6084/m9.figshare.12456308]]). If you clone into this repository, make a [[./data]] folder and populate by downloading the data and 
+   Data (vcf files, gerp annotations, genetic map, imputation outputs) can be found as supplementary dataset of the paper ([[https://doi.org/10.6084/m9.figshare.12456308]]). If you clone into this repository, make a [[./data]] folder and populate by downloading the data and 
 
    ~tar zxvf eurodh_data.tar.gz -C /path/to/eurodh-scripts~ 
    
