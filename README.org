@@ -4,8 +4,32 @@
 
 * Description
 
+** What this is
+   This is a repository to recreate plots of the EuroDH project. For more information on this see https://www.g3journal.org/content/early/2020/05/28/g3.120.401196.
+
 ** Data
-   Data (vcf files for 50k and 600k dataset, GWAS datasets, original datasets) is currently gitignored.
+   Data (vcf files, gerp annotations, genetic map, imputation outputs) can be found as supplementary dataset of the paper ([[doi.org/10.6084/m9.figshare.12456308]]). If you clone into this repository, make a [[./data]] folder and populate by downloading the data and 
+
+   ~tar zxvf eurodh_data.tar.gz -C /path/to/eurodh-scripts~ 
+   
+   to run the scripts required to generate the plots.
+
+   Original genotype data from Melchiner et al. 2017 and Mayer et al. 2017.
+   GWAS effect sizes computed from phenotypes published in Brauner et al. 2018. 
+   Genetic map from Ogut et al. 2015. 
+   GERP scores from Wang et al. 2017.
+
+*** References
+Brauner, P.C., Müller, D., Schopp, P., Böhm, J., Bauer, E., Schön, C.-C., and Melchinger, A.E. (2018). Genomic Prediction Within and Among Doubled-Haploid Libraries from Maize Landraces. Genetics 210, 1185–1196.
+
+Mayer, M., Unterseer, S., Bauer, E., Leon, N. de, Ordas, B., and Schön, C.-C. (2017). Is there an optimum level of diversity in utilization of genetic resources? Theor Appl Genet 130, 2283–2295.
+
+Melchinger, A.E., Schopp, P., Müller, D., Schrag, T.A., Bauer, E., Unterseer, S., Homann, L., Schipprack, W., and Schön, C.-C. (2017). Safeguarding Our Genetic Resources with Libraries of Doubled-Haploid Lines. Genetics 206, 1611–1619.
+
+Ogut, F., Bian, Y., Bradbury, P.J., and Holland, J.B. (2015). Joint-multiple family linkage analysis predicts within-family variation better than single-family analysis of the maize nested association mapping population. Heredity 114, 552–563.
+
+Wang, L., Beissinger, T.M., Lorant, A., Ross-Ibarra, C., Ross-Ibarra, J., and Hufford, M.B. (2017). The interplay of demography and selection during maize domestication and expansion. Genome Biology 18, 215.
+
 
 ** Scripts
    ~probability_farm_260419.R~ calculates ancestral frequecies and joint probabilities for figure 2. It requires some time to compute, depending on the machine. To save some time, the output is also saved in the [[./output]] folder. 
@@ -14,8 +38,10 @@
 
    Genetic load based on GERP scores can be estimated using ~genespace_euler.R~. This script also runs for a while. Output is already stored ready for plotting in [[./output/genload]]. 
 
+   Should there be missing input files or any other problems please feel free to open an issue.
+
 ** Reproduce Figures
-   All figures can be reproduced using the provided scripts. Scripts for supplementary figures are have the prefix ~figS_*~. All plots are stored in [[./plots]]. 
+   All figures can be reproduced using the provided scripts and supplementary data. Scripts for supplementary figures are have the prefix ~figS_*~. All plots are stored in [[./plots]]. 
 
 * Requirements
 - R (tested on 3.6.0)
